@@ -12,11 +12,8 @@ Dependencies are as follows: Use Pip install
 - xlrd (pluggin for xlsx files)
 - XlsxWriter
 '''
-#Prepare import data
-#1. rename import xlsx sheet tab to "Sheet1"
-#2. rename xlsx grow plan to "plan.xlsx"
 
-#Step 1 build a DataFrame from xlsx file and write to a csv
+#Step 1 build a DataFrame from xlsx file and write to a csv then clean up a little
 def panda():
     #Assign spreadsheet this name
     file = 'plan.xlsx'
@@ -55,8 +52,7 @@ def clean_up():
     'Unnamed: 26', 'Unnamed: 27', 'Unnamed: 29', 'Unnamed: 31', 'Unnamed: 32', 
     'Unnamed: 33', 'Unnamed: 34', 'Unnamed: 35', 'Unnamed: 36', 'Unnamed: 38', 
     'Unnamed: 39', 'Unnamed: 40', 'Unnamed: 41', 'Unnamed: 42', 'Unnamed: 43', 
-    'Unnamed: 44', 'Unnamed: 45' ], axis=1).to_csv('new2.csv')
-
+    'Unnamed: 44', 'Unnamed: 45' ], axis=1).to_csv('newplan.csv')
 
 #Connection to microsoft access database
 conn_str = (
@@ -72,11 +68,12 @@ def all_data():
     data = crsr.fetchall()
     print(data)
 
-#First delete all rows in table Budget Acreage Plan
+#Delete all rows in Budget Acreage Plan DB Table
 def delete_rows():
     cnxn = pyodbc.connect(conn_str)
     crsr = cnxn.cursor()
     crsr.execute('DELETE FROM [Budget Acreage Plan]')
     crsr.commit()
 
-#Second read new budget plan from csv and clean up for importing 
+#Write newplan.csv file to database
+
