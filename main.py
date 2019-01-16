@@ -27,10 +27,10 @@ def panda():
     df1.drop(df1.index[:4], inplace=True)
     df1.rename(
         columns={
+            "Unnamed: 13":"50 LB Units",
             "Unnamed: 1":"Area",
             "Unnamed: 4":"Hybrid",
             "Unnamed: 8":"Certified",
-            "Unnamed: 13":"Total 50LB units",
             "Unnamed: 17":"Female Acres",
             "Unnamed: 18":"Units/Female Acre 50lb",
             "Unnamed: 19":"Units/GA",
@@ -38,7 +38,7 @@ def panda():
             "Unnamed: 22":"Gross Acres",
             "Unnamed: 28":"Female Acres",
             "Unnamed: 30":"Female Parent",
-            "Unnamed: 37":"Male Inbred",
+            "Unnamed: 37":"Male Parent",
             }, inplace=True)
     df1.to_csv('new.csv')
 
@@ -52,12 +52,12 @@ def clean_up():
     'Unnamed: 26', 'Unnamed: 27', 'Unnamed: 29', 'Unnamed: 31', 'Unnamed: 32', 
     'Unnamed: 33', 'Unnamed: 34', 'Unnamed: 35', 'Unnamed: 36', 'Unnamed: 38', 
     'Unnamed: 39', 'Unnamed: 40', 'Unnamed: 41', 'Unnamed: 42', 'Unnamed: 43', 
-    'Unnamed: 44', 'Unnamed: 45' ], axis=1).to_csv('newplan.csv')
+    'Unnamed: 44', 'Unnamed: 45'], axis=1).to_csv('newplan.csv')
 
 #Connection to microsoft access database
 conn_str = (
     r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
-    r'DBQ=C:\Users\cardench\Desktop\db_plug\sorghum2018.accdb;'
+    r'DBQ=C:\Users\cardench\desktop\db_plug\sorghum2018.accdb;'
 )
 
 #View to display all table data
@@ -76,4 +76,15 @@ def delete_rows():
     crsr.commit()
 
 #Write newplan.csv file to database
+
+def import_db():
+    cnxn = pyodbc.connect(conn_str)
+    crsr = cnxn.cursor()
+    with open('newplan.csv', 'r') as f:
+        reader = csv.reader(f)
+        next(reader) #skip teh ehader row
+        for row in reader:
+            crsr.execute('INSERT INTO Budget Acreage Plan VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?', row)
+    f.close()
+    crsr.commit()
 
